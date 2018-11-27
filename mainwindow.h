@@ -6,6 +6,7 @@
 #include <QtSql/QSqlTableModel>
 #include <QListWidgetItem>
 #include <QTableView>
+#include "ui_eliminarregistro.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,9 +41,14 @@ private:
     Ui::MainWindow *ui;
     QList<QSqlTableModel*> listModel;
     QList<QTableView*> listTables;
+    QSqlDatabase db;
     QStringList tablasClickadas;
+    QList<QStringList> listaTiposCampos;
+    UI_EliminarRegistro *eliminar;
     bool abrir_db();
     QString get_tipoCampo(QString);
+
+    void cerrarConexiones();
 };
 
 #endif // MAINWINDOW_H

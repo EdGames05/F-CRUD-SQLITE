@@ -7,6 +7,7 @@
 #include <QtSql/QSqlError>
 #include <QTableWidget>
 #include <QtSql/QSqlRecord>
+#include "ui_eliminarregistro.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -44,13 +45,15 @@ bool MainWindow::abrir_db(){
         return false;
     }
 
-    this->tablasClickadas.clear();
-    ui->tabTablas->clear();
     ui->listTablas->clear();
+    ui->tabTablas->clear();
+    this->tablasClickadas.clear();
     this->listModel.clear();
     this->listTables.clear();
+    this->db.close();
+    this->listaTiposCampos.clear();
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(ui->txtRutaDb->text());
 
     if(!db.open()){
@@ -70,25 +73,20 @@ bool MainWindow::abrir_db(){
     while(query.next()){
         ui->listTablas->addItem(query.value("name").toString());
     }
-    db.close();
+    //db.close();
     return true;
 }
 
 void MainWindow::on_btnCerrar_clicked()
 {
-    ui->listTablas->clear();
-    ui->tabTablas->clear();
-    ui->txtRutaDb->setText("");
-    this->tablasClickadas.clear();
-    this->listModel.clear();
-    this->listTables.clear();
+    this->cerrarConexiones();
 }
 
 void MainWindow::on_listTablas_itemDoubleClicked(QListWidgetItem *item)
 {
     if(item->isSelected()){
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(ui->txtRutaDb->text());
+        //db = QSqlDatabase::addDatabase("QSQLITE");
+        //db.setDatabaseName(ui->txtRutaDb->text());
 
         for(int i = 0; i < tablasClickadas.count(); i++){
             if(tablasClickadas.at(i) == item->text()){
@@ -102,7 +100,7 @@ void MainWindow::on_listTablas_itemDoubleClicked(QListWidgetItem *item)
             db.close();
         }
         else{
-            QSqlTableModel *model = new QSqlTableModel(this);
+            QSqlTableModel *model = new QSqlTableModel(this,this->db);
             model->setTable(item->text());
             if(model->select()){
                 listModel.append(model);
@@ -114,11 +112,12 @@ void MainWindow::on_listTablas_itemDoubleClicked(QListWidgetItem *item)
                 tableWid->setModel(model);
                 tableWid->setContextMenuPolicy(Qt::ActionsContextMenu);
                 tableWid->addAction(ui->actionNuevo_registro);
+                tableWid->addAction(ui->actionInsertar_desde_archivo_CSV);
                 tableWid->addAction(ui->actionEliminar_registro);
                 this->listTables.append(tableWid);
                 this->tablasClickadas.append(item->text());
                 ui->tabTablas->addTab(widget,item->text());
-                db.close();
+                //db.close();
             }
             else{
                 QMessageBox::warning(this,"Error", "Error al leer tabla de la base datos...");
@@ -130,23 +129,12 @@ void MainWindow::on_listTablas_itemDoubleClicked(QListWidgetItem *item)
 
 void MainWindow::on_actionSalir_triggered()
 {
-    ui->listTablas->clear();
-    ui->tabTablas->clear();
-    ui->txtRutaDb->setText("");
-    this->tablasClickadas.clear();
-    this->listModel.clear();
-    this->listTables.clear();
-    this->close();
+    this->cerrarConexiones();
 }
 
 void MainWindow::on_actionCerrar_db_triggered()
 {
-    ui->listTablas->clear();
-    ui->tabTablas->clear();
-    ui->txtRutaDb->setText("");
-    this->tablasClickadas.clear();
-    this->listModel.clear();
-    this->listTables.clear();
+    this->cerrarConexiones();
 }
 
 void MainWindow::on_actionNuevo_registro_triggered()
@@ -158,8 +146,8 @@ void MainWindow::on_actionNuevo_registro_triggered()
         return;
     }
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(ui->txtRutaDb->text());
+    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    //db.setDatabaseName(ui->txtRutaDb->text());
 
     if(!db.open()){
         QMessageBox::warning(this,"Error fatal","Error al abrir base de datos | " + db.lastError().text());
@@ -235,10 +223,21 @@ QString MainWindow::get_tipoCampo(QString tCampo)
     }
 }
 
+void MainWindow::cerrarConexiones()
+{
+    ui->listTablas->clear();
+    ui->tabTablas->clear();
+    ui->txtRutaDb->setText("");
+    this->tablasClickadas.clear();
+    this->listModel.clear();
+    this->listTables.clear();
+    this->db.close();
+    this->listaTiposCampos.clear();
+}
+
 void MainWindow::on_actionEliminar_registro_triggered()
 {
     QSqlTableModel *model = this->listModel.at(ui->tabTablas->currentIndex());
-    QTableView *table = this->listTables.at(ui->tabTablas->currentIndex());
     QMessageBox msgBox;
     msgBox.setText("<h3>Eliminar registro</h3>");
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
@@ -247,11 +246,29 @@ void MainWindow::on_actionEliminar_registro_triggered()
         return;
     }
     else{
-        if(model->selectRow(2)){
-            model->removeRow(table->currentIndex().row());
+
+        QStringList listTipos;
+
+        QSqlQuery query(this->db);
+
+        query.prepare("PRAGMA table_info(" + this->tablasClickadas.at(ui->tabTablas->currentIndex()) + ")");
+
+        if(!query.exec()){
+            QMessageBox::critical(this,"Error", "Error al insertar registro...");
+            return;
         }
-        else{
-            QMessageBox::warning(this,"Error", "Seleccione una fila...");
+
+        while(query.next()){
+            //listCampos.append(query.value("name").toString());
+            listTipos.append(query.value("type").toString());
+            //listPk.append(query.value("pk").toBool());
         }
+
+        query.clear();
+        this->listaTiposCampos.append(listTipos);
+        this->eliminar = new UI_EliminarRegistro(this->listaTiposCampos,model,this);
+        this->eliminar->setHidden(true);
+        this->eliminar->setFocus();
+        this->eliminar->exec();
     }
 }

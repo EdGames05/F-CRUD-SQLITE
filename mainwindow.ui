@@ -249,6 +249,15 @@
     <string>Eliminar registro</string>
    </property>
   </action>
+  <action name="actionInsertar_desde_archivo_CSV">
+   <property name="icon">
+    <iconset resource="source.qrc">
+     <normaloff>:/icons/source/icons/table_go.png</normaloff>:/icons/source/icons/table_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Insertar desde archivo CSV</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

@@ -7,5 +7,6 @@
         <file>source/icons/door_out.png</file>
         <file>source/icons/add.png</file>
         <file>source/icons/table_row_delete.png</file>
+        <file>source/icons/table_go.png</file>
     </qresource>
 </RCC>
