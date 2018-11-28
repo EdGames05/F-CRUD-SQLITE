@@ -31,7 +31,8 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-    ui_eliminarregistro.h
+    ui_eliminarregistro.h \
+    funciones_comun.h
 
 FORMS += \
         mainwindow.ui \

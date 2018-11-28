@@ -117,6 +117,8 @@ void MainWindow::on_listTablas_itemDoubleClicked(QListWidgetItem *item)
                 this->listTables.append(tableWid);
                 this->tablasClickadas.append(item->text());
                 ui->tabTablas->addTab(widget,item->text());
+                ui->tabTablas->setCurrentIndex(ui->tabTablas->count() - 1);
+                this->enlistarTipos(ui->tabTablas->currentIndex());
                 //db.close();
             }
             else{
@@ -235,6 +237,29 @@ void MainWindow::cerrarConexiones()
     this->listaTiposCampos.clear();
 }
 
+void MainWindow::enlistarTipos(int indexTabla)
+{
+    QStringList listTipos;
+
+    QSqlQuery query(this->db);
+
+    query.prepare("PRAGMA table_info(" + this->tablasClickadas.at(indexTabla) + ")");
+
+    if(!query.exec()){
+        QMessageBox::critical(this,"Error", "Error al insertar registro...");
+        return;
+    }
+
+    while(query.next()){
+        //listCampos.append(query.value("name").toString());
+        listTipos.append(query.value("type").toString());
+        //listPk.append(query.value("pk").toBool());
+    }
+
+    query.clear();
+    this->listaTiposCampos.append(listTipos);
+}
+
 void MainWindow::on_actionEliminar_registro_triggered()
 {
     QSqlTableModel *model = this->listModel.at(ui->tabTablas->currentIndex());
@@ -246,27 +271,7 @@ void MainWindow::on_actionEliminar_registro_triggered()
         return;
     }
     else{
-
-        QStringList listTipos;
-
-        QSqlQuery query(this->db);
-
-        query.prepare("PRAGMA table_info(" + this->tablasClickadas.at(ui->tabTablas->currentIndex()) + ")");
-
-        if(!query.exec()){
-            QMessageBox::critical(this,"Error", "Error al insertar registro...");
-            return;
-        }
-
-        while(query.next()){
-            //listCampos.append(query.value("name").toString());
-            listTipos.append(query.value("type").toString());
-            //listPk.append(query.value("pk").toBool());
-        }
-
-        query.clear();
-        this->listaTiposCampos.append(listTipos);
-        this->eliminar = new UI_EliminarRegistro(this->listaTiposCampos,model,this);
+        this->eliminar = new UI_EliminarRegistro(this->tablasClickadas.at(ui->tabTablas->currentIndex()),this->listaTiposCampos.at(ui->tabTablas->currentIndex()),model,this);
         this->eliminar->setHidden(true);
         this->eliminar->setFocus();
         this->eliminar->exec();

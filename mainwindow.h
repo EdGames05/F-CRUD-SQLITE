@@ -49,6 +49,7 @@ private:
     QString get_tipoCampo(QString);
 
     void cerrarConexiones();
+    void enlistarTipos(int indexTabla);
 };
 
 #endif // MAINWINDOW_H
