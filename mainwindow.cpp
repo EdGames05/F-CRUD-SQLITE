@@ -271,9 +271,10 @@ void MainWindow::on_actionEliminar_registro_triggered()
         return;
     }
     else{
-        this->eliminar = new UI_EliminarRegistro(this->tablasClickadas.at(ui->tabTablas->currentIndex()),this->listaTiposCampos.at(ui->tabTablas->currentIndex()),model,this);
+        this->eliminar = new UI_EliminarRegistro(this->db,this->tablasClickadas.at(ui->tabTablas->currentIndex()),this->listaTiposCampos.at(ui->tabTablas->currentIndex()),model,this);
         this->eliminar->setHidden(true);
         this->eliminar->setFocus();
         this->eliminar->exec();
+        model->select();
     }
 }
