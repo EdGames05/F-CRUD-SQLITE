@@ -148,16 +148,6 @@ void MainWindow::on_actionNuevo_registro_triggered()
         return;
     }
 
-    //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    //db.setDatabaseName(ui->txtRutaDb->text());
-
-    if(!db.open()){
-        QMessageBox::warning(this,"Error fatal","Error al abrir base de datos | " + db.lastError().text());
-        ui->txtRutaDb->setText("");
-        db.close();
-        return;
-    }
-
     QStringList listCampos;
     QStringList listTipos;
     QList<bool> listPk;
@@ -180,10 +170,28 @@ void MainWindow::on_actionNuevo_registro_triggered()
 
     for(int i = 0; i < listCampos.count(); i++){
         if((get_tipoCampo(listTipos.at(i)) == "VARCHAR") && (listPk.at(i))){
-            record.setValue(i,"1");
+            //--------- Primero averiguamos si el código anterior es númerico
+            //--------- para así insertar un número automatico
+            //--------- Aquí podremos poner el valor o posición del campo y también el nombre del campo
+            //--------- asi nos devolvera su valor anterior yo optare por el valor numerico
+            //--------- porque si entro aquí significa de que está en la posición deseada (i)
+            const QString valor = model->record(model->rowCount() - 1).value(i).toString();
+
+            if(valor.isEmpty()){
+                //-------------- Si model no tiene datos entonces le pongo un 1
+                record.setValue(i,"1");
+            }
+            else if(this->validar_numeros(valor)){
+                record.setValue(i,QString::number(valor.toInt() + 1));
+            }
+            else{
+                //----------- Si el código no es númerico entonces solo pongo un código cualquiera
+                record.setValue(i,"XXXX");
+            }
         }
         else if(get_tipoCampo(listTipos.at(i)) == "INTEGER"){
-            record.setValue(i,1);
+            const int valor = model->record(model->rowCount() - 1).value(i).toInt() + 1;
+            record.setValue(i,valor);
         }
         else if((get_tipoCampo(listTipos.at(i)) == "VARCHAR") && (!listPk.at(i))){
             record.setValue(i,"TEXTO");
@@ -206,7 +214,7 @@ void MainWindow::on_actionNuevo_registro_triggered()
         QMessageBox::information(this,"Exito","Fila insertada exitosamente");
     }
     else{
-        QMessageBox::warning(this,"Error", "Error al insertar nuevo registro...");
+        QMessageBox::warning(this,"Error", "Error al insertar nuevo registro | " + model->lastError().text());
     }
 }
 
@@ -258,6 +266,18 @@ void MainWindow::enlistarTipos(int indexTabla)
 
     query.clear();
     this->listaTiposCampos.append(listTipos);
+}
+
+bool MainWindow::validar_numeros(QString texto)
+{
+    QChar carac;
+    for(int i = 0; i < texto.length(); i++){
+        carac = texto.at(i);
+        if(!carac.isNumber()){
+            return false;
+        }
+    }
+    return true;
 }
 
 void MainWindow::on_actionEliminar_registro_triggered()

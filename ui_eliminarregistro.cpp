@@ -27,7 +27,6 @@ UI_EliminarRegistro::UI_EliminarRegistro(QSqlDatabase db,QString nombreTabla,QSt
     if(ui->ddl_campos->count() > 0){
         ui->txtPrevisualizacion->setText(consulta + this->nombreTabla + " WHERE " + ui->ddl_campos->itemText(0) + " = ");
     }
-
 }
 
 UI_EliminarRegistro::~UI_EliminarRegistro()

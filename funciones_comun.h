@@ -71,46 +71,6 @@ QStringList separar_palabras(QString txt){
     }
     return listWords;
 }
-
-template <typename T>
-T devolver_id_siguiente(QString tipoCampo, QString ant){
-    if(tipoCampo == "VARCHAR"){
-
-        if(ant.isEmpty()){
-            return "1";
-        }
-        else if(!validar_numeros(ant)){
-            return "00000000000X";
-        }
-
-        QChar cAux;
-
-        for(int i = ant.length() - 1; i == 0; i++){
-            cAux = ant.at(i);
-            if(cAux == "9"){
-                ant.replace(i,i,"0");
-
-                if(ant.at(i - 1) != "\n" || ant.at(i - 1) != NULL || ant.at(i - 1) != nullptr){
-                }
-
-            }
-            else if(cAux != "9"){
-                int num = cAux.digitValue() + 1;
-                ant.replace(i,i,QString::number(num));
-            }
-        }
-
-    }
-    else if(tipoCampo == "INTEGER"){
-
-        if(ant.isEmpty()){
-            return 1;
-        }
-
-        return ant.toInt() + 1;
-    }
-}
-
 }
 
 #endif // FUNCIONES_COMUN_H

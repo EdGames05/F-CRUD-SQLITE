@@ -50,6 +50,7 @@ private:
 
     void cerrarConexiones();
     void enlistarTipos(int indexTabla);
+    bool validar_numeros(QString texto);
 };
 
 #endif // MAINWINDOW_H
