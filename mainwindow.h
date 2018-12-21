@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 #include <QTableView>
 #include "ui_eliminarregistro.h"
+#include "ui_import_csv.h"
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +38,8 @@ private slots:
 
     void on_actionEliminar_registro_triggered();
 
+    void on_actionInsertar_desde_archivo_CSV_triggered();
+
 private:
     Ui::MainWindow *ui;
     QList<QSqlTableModel*> listModel;
@@ -45,6 +48,7 @@ private:
     QStringList tablasClickadas;
     QList<QStringList> listaTiposCampos;
     UI_EliminarRegistro *eliminar;
+    ui_import_csv *importCSV;
     bool abrir_db();
     QString get_tipoCampo(QString);
 

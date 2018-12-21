@@ -132,6 +132,7 @@ void MainWindow::on_listTablas_itemDoubleClicked(QListWidgetItem *item)
 void MainWindow::on_actionSalir_triggered()
 {
     this->cerrarConexiones();
+    this->close();
 }
 
 void MainWindow::on_actionCerrar_db_triggered()
@@ -297,4 +298,34 @@ void MainWindow::on_actionEliminar_registro_triggered()
         this->eliminar->exec();
         model->select();
     }
+}
+
+void MainWindow::on_actionInsertar_desde_archivo_CSV_triggered()
+{
+    QStringList listTipos;
+    QList<bool> llaves;
+    QSqlTableModel *model = listModel.at(ui->tabTablas->currentIndex());
+    QSqlQuery query(this->db);
+    const QString nombreTabla = tablasClickadas.at(ui->tabTablas->currentIndex());
+    query.prepare("PRAGMA table_info(" + nombreTabla + ")");
+
+    if(!query.exec()){
+        QMessageBox::critical(this,"Error", "Error al insertar registro...");
+        return;
+    }
+
+    while(query.next()){
+        //----------------- Obtengo los tipos de campos
+        listTipos.append(query.value("type").toString());
+        //----------------- Obtengo quien es llave primaria
+        llaves.append(query.value("pk").toBool());
+    }
+
+    query.clear();
+
+    this->importCSV = new ui_import_csv(nombreTabla,listTipos,llaves,this);
+    this->importCSV->setHidden(true);
+    this->importCSV->setFocus();
+    this->importCSV->exec();
+    model->select();
 }

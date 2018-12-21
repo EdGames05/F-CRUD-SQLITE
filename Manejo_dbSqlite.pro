@@ -27,16 +27,19 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    ui_eliminarregistro.cpp
+    ui_eliminarregistro.cpp \
+    ui_import_csv.cpp
 
 HEADERS += \
         mainwindow.h \
     ui_eliminarregistro.h \
-    funciones_comun.h
+    funciones_comun.h \
+    ui_import_csv.h
 
 FORMS += \
         mainwindow.ui \
-    ui_eliminarregistro.ui
+    ui_eliminarregistro.ui \
+    ui_import_csv.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
