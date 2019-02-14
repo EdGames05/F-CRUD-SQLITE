@@ -303,6 +303,7 @@ void MainWindow::on_actionEliminar_registro_triggered()
 void MainWindow::on_actionInsertar_desde_archivo_CSV_triggered()
 {
     QStringList listTipos;
+    QStringList listCampos;
     QList<bool> llaves;
     QSqlTableModel *model = listModel.at(ui->tabTablas->currentIndex());
     QSqlQuery query(this->db);
@@ -315,6 +316,8 @@ void MainWindow::on_actionInsertar_desde_archivo_CSV_triggered()
     }
 
     while(query.next()){
+        //----------------- Obtengo los nombres de los campos
+        listCampos.append(query.value("name").toString());
         //----------------- Obtengo los tipos de campos
         listTipos.append(query.value("type").toString());
         //----------------- Obtengo quien es llave primaria
@@ -323,7 +326,7 @@ void MainWindow::on_actionInsertar_desde_archivo_CSV_triggered()
 
     query.clear();
 
-    this->importCSV = new ui_import_csv(nombreTabla,listTipos,llaves,this);
+    this->importCSV = new ui_import_csv(listCampos,nombreTabla,listTipos,llaves,this);
     this->importCSV->setHidden(true);
     this->importCSV->setFocus();
     this->importCSV->exec();

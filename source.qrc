@@ -8,5 +8,7 @@
         <file>source/icons/add.png</file>
         <file>source/icons/table_row_delete.png</file>
         <file>source/icons/table_go.png</file>
+        <file>source/icons/folder_explore.png</file>
+        <file>source/icons/arrow_right.png</file>
     </qresource>
 </RCC>

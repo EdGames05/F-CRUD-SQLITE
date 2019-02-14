@@ -30,6 +30,10 @@
           <property name="text">
            <string>Archivo</string>
           </property>
+          <property name="icon">
+           <iconset resource="source.qrc">
+            <normaloff>:/icons/source/icons/folder_explore.png</normaloff>:/icons/source/icons/folder_explore.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -94,6 +98,10 @@
           <property name="text">
            <string>Importar</string>
           </property>
+          <property name="icon">
+           <iconset resource="source.qrc">
+            <normaloff>:/icons/source/icons/arrow_right.png</normaloff>:/icons/source/icons/arrow_right.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -110,7 +118,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="source.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnCancelar</sender>
