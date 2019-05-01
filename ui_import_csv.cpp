@@ -8,6 +8,8 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
+#include <qrandom.h>
+#include <QDate>
 
 ui_import_csv::ui_import_csv(QStringList listCampos,QString nombre_tabla,QStringList tipos,QList<bool> llaves,QWidget *parent) :
     QDialog(parent),
@@ -84,7 +86,7 @@ void ui_import_csv::on_btnImportar_clicked()
     }
     else{
 
-        int marca = 0;
+        int marca = -1;
 
         for(int i = 0; i < listChk.size(); i++){
             if(listChk.at(i)->isChecked()){
@@ -128,12 +130,16 @@ void ui_import_csv::on_btnImportar_clicked()
                 linea.replace("\n","",Qt::CaseInsensitive);
                 QStringList listCols = linea.split(",");
 
-                if(!primeraVuelta){
-                    this->insertar_fila(list_ColsInsertar,listCols,list_indicesCols);
+                if(primeraVuelta){
+                    if(!this->insertar_fila(list_ColsInsertar,listCols,list_indicesCols)){
+                        QMessageBox::critical(this,"Error","Error al insertar registros");
+                        return;
+                    }
                 }
                 primeraVuelta = true;
             }
             archi.close();
+            QMessageBox::information(this,"Exito","Información importada exitosamente...");
         }
     }
 }
@@ -168,10 +174,85 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
 
             prepareQuery += ") VALUES(";
 
-            for(int i = 0; i < lista_camposInser.size(); i++){
+            for(int i = 0; i < listCampos.size(); i++){
 
+                for(int j = 0; j < lista_camposInser.size(); j++){
+                    //----------- hace esto si encuentra el campo
+                    if(listCampos.at(i) == lista_camposInser.at(j)){
+
+                        if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive)){
+                            prepareQuery += valores.at(indicesInsertar.at(j));
+                        }
+                        else
+                        if(tipos.at(i).toUpper().contains("VARCHAR",Qt::CaseInsensitive)){
+                            prepareQuery += "'" + valores.at(indicesInsertar.at(j)) + "'";
+                        }
+                        else
+                        if(tipos.at(i).toUpper().contains("BOOLEAN",Qt::CaseInsensitive)){
+                            prepareQuery += valores.at(indicesInsertar.at(j));
+                        }
+                        else
+                        if(tipos.at(i).toUpper().contains("FLOAT",Qt::CaseInsensitive)){
+                            prepareQuery += valores.at(indicesInsertar.at(j));
+                        }
+                        else
+                        if(tipos.at(i).toUpper().contains("DATE",Qt::CaseInsensitive)){
+                            prepareQuery += valores.at(indicesInsertar.at(j));
+                        }
+                        else
+                        if(tipos.at(i).toUpper().contains("REAL",Qt::CaseInsensitive)){
+                            prepareQuery += valores.at(indicesInsertar.at(j));
+                        }
+
+                        qDebug() << prepareQuery;
+                        prepareQuery += ",";
+
+                        break;
+                    }
+                }
+
+                //------------ Hace esto si no lo encuentra
+
+                if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive)){
+                    prepareQuery += QString::number(qrand() % 9999999 + 1);
+                    prepareQuery += ",";
+                }
+                else
+                if(tipos.at(i).toUpper().contains("VARCHAR",Qt::CaseInsensitive)){
+                    prepareQuery += "'TEXTO'";
+                    prepareQuery += ",";
+                }
+                else
+                if(tipos.at(i).toUpper().contains("BOOLEAN",Qt::CaseInsensitive)){
+                    prepareQuery += "FALSE";
+                    prepareQuery += ",";
+                }
+                else
+                if(tipos.at(i).toUpper().contains("FLOAT",Qt::CaseInsensitive)){
+                    prepareQuery += QString::number(qrand() % 9999999 + 1);
+                    prepareQuery += ",";
+                }
+                else
+                if(tipos.at(i).toUpper().contains("DATE",Qt::CaseInsensitive)){
+                    prepareQuery += "date('now')";
+                    prepareQuery += ",";
+                }
+                else
+                if(tipos.at(i).toUpper().contains("REAL",Qt::CaseInsensitive)){
+                    prepareQuery += QString::number(qrand() % 9999999 + 1);
+                    prepareQuery += ",";
+                }
             }
 
+            //----------------- En esta parte quitamos la , que no debería ir
+            prepareQuery.remove(prepareQuery.length() - 1, prepareQuery.length() - 1);
+            prepareQuery += ")";
+            qDebug() << prepareQuery;
+
+            if(!query.exec(prepareQuery)){
+                return false;
+            }
+            return true;
         }
     }
 }
