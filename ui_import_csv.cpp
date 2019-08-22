@@ -173,35 +173,42 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
             }
 
             prepareQuery += ") VALUES(";
+            bool entro = false;
 
             for(int i = 0; i < listCampos.size(); i++){
-
+                entro = false;
                 for(int j = 0; j < lista_camposInser.size(); j++){
                     //----------- hace esto si encuentra el campo
                     if(listCampos.at(i) == lista_camposInser.at(j)){
 
                         if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive)){
                             prepareQuery += valores.at(indicesInsertar.at(j));
+                            entro = true;
                         }
                         else
                         if(tipos.at(i).toUpper().contains("VARCHAR",Qt::CaseInsensitive)){
                             prepareQuery += "'" + valores.at(indicesInsertar.at(j)) + "'";
+                            entro = true;
                         }
                         else
                         if(tipos.at(i).toUpper().contains("BOOLEAN",Qt::CaseInsensitive)){
                             prepareQuery += valores.at(indicesInsertar.at(j));
+                            entro = true;
                         }
                         else
                         if(tipos.at(i).toUpper().contains("FLOAT",Qt::CaseInsensitive)){
                             prepareQuery += valores.at(indicesInsertar.at(j));
+                            entro = true;
                         }
                         else
                         if(tipos.at(i).toUpper().contains("DATE",Qt::CaseInsensitive)){
                             prepareQuery += valores.at(indicesInsertar.at(j));
+                            entro = true;
                         }
                         else
                         if(tipos.at(i).toUpper().contains("REAL",Qt::CaseInsensitive)){
                             prepareQuery += valores.at(indicesInsertar.at(j));
+                            entro = true;
                         }
 
                         qDebug() << prepareQuery;
@@ -213,7 +220,7 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
 
                 //------------ Hace esto si no lo encuentra
 
-                if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive)){
+                /*if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive)){
                     prepareQuery += QString::number(qrand() % 9999999 + 1);
                     prepareQuery += ",";
                 }
@@ -241,15 +248,16 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
                 if(tipos.at(i).toUpper().contains("REAL",Qt::CaseInsensitive)){
                     prepareQuery += QString::number(qrand() % 9999999 + 1);
                     prepareQuery += ",";
-                }
+                }*/
             }
 
             //----------------- En esta parte quitamos la , que no debería ir
             prepareQuery.remove(prepareQuery.length() - 1, prepareQuery.length() - 1);
-            prepareQuery += ")";
+            prepareQuery += ");";
             qDebug() << prepareQuery;
 
             if(!query.exec(prepareQuery)){
+                QMessageBox::critical(this,"Error", query.lastError().text());
                 return false;
             }
             return true;
