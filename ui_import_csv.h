@@ -7,6 +7,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QComboBox>
+#include <QtSql/QSqlDatabase>
 
 namespace Ui {
 class ui_import_csv;
@@ -17,7 +18,7 @@ class ui_import_csv : public QDialog
     Q_OBJECT
 
 public:
-    explicit ui_import_csv(QStringList listCampos,QString nombre_tabla,QStringList tipos,QList<bool> llaves,QWidget *parent = nullptr);
+    explicit ui_import_csv(QSqlDatabase db,QStringList listCampos,QString nombre_tabla,QStringList tipos,QList<bool> llaves,QWidget *parent = nullptr);
     ~ui_import_csv();
 
 private slots:
@@ -27,6 +28,7 @@ private slots:
 
 private:
     Ui::ui_import_csv *ui;
+    QSqlDatabase db;
     QString tabla;
     QStringList tipos;
     QStringList listCampos;

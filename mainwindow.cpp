@@ -73,7 +73,7 @@ bool MainWindow::abrir_db(){
     while(query.next()){
         ui->listTablas->addItem(query.value("name").toString());
     }
-    //db.close();
+    //db.close(); nunca cierro la base de datos
     return true;
 }
 
@@ -326,7 +326,7 @@ void MainWindow::on_actionInsertar_desde_archivo_CSV_triggered()
 
     query.clear();
 
-    this->importCSV = new ui_import_csv(listCampos,nombreTabla,listTipos,llaves,this);
+    this->importCSV = new ui_import_csv(this->db,listCampos,nombreTabla,listTipos,llaves,this);
     this->importCSV->setHidden(true);
     this->importCSV->setFocus();
     this->importCSV->exec();

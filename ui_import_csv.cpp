@@ -11,7 +11,7 @@
 #include <qrandom.h>
 #include <QDate>
 
-ui_import_csv::ui_import_csv(QStringList listCampos,QString nombre_tabla,QStringList tipos,QList<bool> llaves,QWidget *parent) :
+ui_import_csv::ui_import_csv(QSqlDatabase db,QStringList listCampos,QString nombre_tabla,QStringList tipos,QList<bool> llaves,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ui_import_csv)
 {
@@ -20,6 +20,7 @@ ui_import_csv::ui_import_csv(QStringList listCampos,QString nombre_tabla,QString
     this->tipos = tipos;
     this->llaves = llaves;
     this->listCampos = listCampos;
+    this->db = db;
 }
 
 ui_import_csv::~ui_import_csv()
@@ -140,6 +141,7 @@ void ui_import_csv::on_btnImportar_clicked()
             }
             archi.close();
             QMessageBox::information(this,"Exito","Información importada exitosamente...");
+            this->close();
         }
     }
 }
@@ -151,16 +153,16 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
         return false;
     }
     else{
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(ui->txtRuta->text());
+        //QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+        //db.setDatabaseName(ui->txtRuta->text());
 
-        if(!db.open()){
-            QMessageBox::critical(this,"Error fatal","Se genero un error al insertar en fila en base de datos...");
+        if(!this->db.open()){
+            QMessageBox::critical(this,"Error fatal","Se genero un error al insertar en fila en base de datos (Base de datos no abierta)...");
             db.close();
             return false;
         }
         else{
-            QSqlQuery query(db);
+            QSqlQuery query(this->db);
             QString prepareQuery = "INSERT INTO " + this->tabla + "(";
 
             for(int i = 0; i < this->listCampos.size(); i++){
