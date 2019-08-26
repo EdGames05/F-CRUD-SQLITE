@@ -187,7 +187,7 @@ void MainWindow::on_actionNuevo_registro_triggered()
             }
             else{
                 //----------- Si el código no es númerico entonces solo pongo un código cualquiera
-                record.setValue(i,"XXXX");
+                record.setValue(i,"X");
             }
         }
         else if(get_tipoCampo(listTipos.at(i)) == "INTEGER"){
@@ -195,7 +195,7 @@ void MainWindow::on_actionNuevo_registro_triggered()
             record.setValue(i,valor);
         }
         else if((get_tipoCampo(listTipos.at(i)) == "VARCHAR") && (!listPk.at(i))){
-            record.setValue(i,"TEXTO");
+            record.setValue(i,"T");
         }
         else if(get_tipoCampo(listTipos.at(i)) == "TEXT"){
             record.setValue(i,"TEXTO");

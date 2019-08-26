@@ -212,6 +212,11 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
                             prepareQuery += valores.at(indicesInsertar.at(j));
                             entro = true;
                         }
+                        else
+                        if(tipos.at(i).toUpper().contains("TEXT",Qt::CaseInsensitive)){
+                            prepareQuery += "'" + valores.at(indicesInsertar.at(j)) + "'";
+                            entro = true;
+                        }
 
                         qDebug() << prepareQuery;
                         prepareQuery += ",";
@@ -219,44 +224,47 @@ bool ui_import_csv::insertar_fila(QStringList lista_camposInser, QStringList val
                         break;
                     }
                 }
-
                 //------------ Hace esto si no lo encuentra
 
-                /*if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive)){
+                if(tipos.at(i).toUpper().contains("INTEGER",Qt::CaseInsensitive) && !entro){
                     prepareQuery += QString::number(qrand() % 9999999 + 1);
                     prepareQuery += ",";
                 }
                 else
-                if(tipos.at(i).toUpper().contains("VARCHAR",Qt::CaseInsensitive)){
-                    prepareQuery += "'TEXTO'";
+                if(tipos.at(i).toUpper().contains("VARCHAR",Qt::CaseInsensitive) && !entro){
+                    prepareQuery += "'T'";
                     prepareQuery += ",";
                 }
                 else
-                if(tipos.at(i).toUpper().contains("BOOLEAN",Qt::CaseInsensitive)){
+                if(tipos.at(i).toUpper().contains("BOOLEAN",Qt::CaseInsensitive) && !entro){
                     prepareQuery += "FALSE";
                     prepareQuery += ",";
                 }
                 else
-                if(tipos.at(i).toUpper().contains("FLOAT",Qt::CaseInsensitive)){
+                if(tipos.at(i).toUpper().contains("FLOAT",Qt::CaseInsensitive) && !entro){
                     prepareQuery += QString::number(qrand() % 9999999 + 1);
                     prepareQuery += ",";
                 }
                 else
-                if(tipos.at(i).toUpper().contains("DATE",Qt::CaseInsensitive)){
+                if(tipos.at(i).toUpper().contains("DATE",Qt::CaseInsensitive) && !entro){
                     prepareQuery += "date('now')";
                     prepareQuery += ",";
                 }
                 else
-                if(tipos.at(i).toUpper().contains("REAL",Qt::CaseInsensitive)){
+                if(tipos.at(i).toUpper().contains("REAL",Qt::CaseInsensitive) && !entro){
                     prepareQuery += QString::number(qrand() % 9999999 + 1);
                     prepareQuery += ",";
-                }*/
+                }
+                else
+                if(tipos.at(i).toUpper().contains("TEXT",Qt::CaseInsensitive) && !entro){
+                    prepareQuery += "'T'";
+                    prepareQuery += ",";
+                }
             }
 
             //----------------- En esta parte quitamos la , que no debería ir
             prepareQuery.remove(prepareQuery.length() - 1, prepareQuery.length() - 1);
             prepareQuery += ");";
-            qDebug() << prepareQuery;
 
             if(!query.exec(prepareQuery)){
                 QMessageBox::critical(this,"Error", query.lastError().text());
