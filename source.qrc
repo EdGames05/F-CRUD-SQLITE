@@ -10,5 +10,6 @@
         <file>source/icons/table_go.png</file>
         <file>source/icons/folder_explore.png</file>
         <file>source/icons/arrow_right.png</file>
+        <file>source/icons/icon_sqlite.png</file>
     </qresource>
 </RCC>

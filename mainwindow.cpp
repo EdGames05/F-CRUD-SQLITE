@@ -40,10 +40,6 @@ bool MainWindow::abrir_db(){
     if(archi != ""){
         ui->txtRutaDb->setText(archi);
     }
-    else{
-        QMessageBox::critical(this,"Error fatal","Error al abrir base de datos...");
-        return false;
-    }
 
     ui->listTablas->clear();
     ui->tabTablas->clear();

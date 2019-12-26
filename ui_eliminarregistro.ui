@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="source.qrc">
+    <normaloff>:/icons/source/icons/icon_sqlite.png</normaloff>:/icons/source/icons/icon_sqlite.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QGroupBox" name="gb_tabla">
@@ -177,7 +181,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="source.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>btnCancelar</sender>

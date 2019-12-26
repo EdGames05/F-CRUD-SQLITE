@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="source.qrc">
+    <normaloff>:/icons/source/icons/icon_sqlite.png</normaloff>:/icons/source/icons/icon_sqlite.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
